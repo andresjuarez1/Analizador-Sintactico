@@ -119,6 +119,15 @@ function parse(tokens) {
     expect('LlaveCierre');
   }
 
+  function parseFunctionDeclaration() {
+    expect('PalabraReservadaIf');
+    expect('Identificador');
+    expect('ParentesisApertura');
+    expect('ParentesisCierre');
+    expect('LlaveApertura');
+    expect('LlaveCierre');
+  }
+
   function parseExpression() {
     expect('Identificador');
     expect('Igualdad');
