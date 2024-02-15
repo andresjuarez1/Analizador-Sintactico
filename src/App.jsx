@@ -6,20 +6,21 @@ const tiposToken = [
   { regex: /^string/, token: "PalabraReservadaString" },
   { regex: /^float/, token: "PalabraReservadaFloat" },
   { regex: /^function/, token: "PalabraReservadaFunction" },
+  { regex: /^if/, token: "PalabraReservadaIf" },
+  { regex: /^else/, token: "PalabraReservadaElse" },
+  { regex: /^while/, token: "PalabraReservadaWhile" },
+  { regex: /^for/, token: "PalabraReservadaFor" },
   { regex: /^[_a-zA-Z][_a-zA-Z0-9]*/, token: "Identificador" },
   { regex: /^"[^"]*"/, token: "Cadena" },
   { regex: /^-?[0-9]+(?:\.[0-9]+)?/, token: "Numero" },
+  { regex: /^==/, token: "Igualdad" },
   { regex: /^=/, token: "Asignacion" },
   { regex: /^;/, token: "PuntoYComa" },
   { regex: /^{/, token: "LlaveApertura" },
   { regex: /^}/, token: "LlaveCierre" },
   { regex: /^\(/, token: "ParentesisApertura" },
   { regex: /^\)/, token: "ParentesisCierre" },
-  { regex: /^==/, token: "Igualdad" },
-  { regex: /^if/, token: "PalabraReservadaIf" },
-  { regex: /^else/, token: "PalabraReservadaElse" },
-  { regex: /^while/, token: "PalabraReservadaWhile" },
-  { regex: /^for/, token: "PalabraReservadaFor" },
+
 ];
 
 function lex(input) {
@@ -81,7 +82,7 @@ function parse(tokens) {
       tokens[currentPosition].type === 'PalabraReservadaFloat' ||
       tokens[currentPosition].type === 'PalabraReservadaString'
     ) {
-      const tipoVariable = tokens[currentPosition].type; // Guardar el tipo de variable
+      const tipoVariable = tokens[currentPosition].type;
 
       nextToken();
       expect('Identificador');
@@ -103,36 +104,118 @@ function parse(tokens) {
     }
   }
 
-
-
-  function parseElseStatement() {
-    expect('LlaveApertura');
-    expect('LlaveCierre');
-  }
-
   function parseFunctionDeclaration() {
     expect('PalabraReservadaFunction');
     expect('Identificador');
     expect('ParentesisApertura');
     expect('ParentesisCierre');
     expect('LlaveApertura');
+    while (tokens[currentPosition].type !== 'LlaveCierre') {
+      if (tokens[currentPosition].type === 'PalabraReservadaFor') {
+        parseForDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaWhile') {
+        parseWhileDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaIf') {
+        parseIfDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaNum' || tokens[currentPosition].type === 'PalabraReservadaFloat' || tokens[currentPosition].type === 'PalabraReservadaString') {
+        parseVariableDeclaration();
+      } else {
+        throw new Error(`Error de sintaxis: Token inesperado ${tokens[currentPosition].type}`);
+      }
+    }
     expect('LlaveCierre');
   }
 
-  function parseFunctionDeclaration() {
+  function parseIfDeclaration() {
     expect('PalabraReservadaIf');
-    expect('Identificador');
     expect('ParentesisApertura');
+    expect('Identificador');
+    expect('Igualdad');
+    expect('Identificador')
     expect('ParentesisCierre');
     expect('LlaveApertura');
+    while (tokens[currentPosition].type !== 'LlaveCierre') {
+      if (tokens[currentPosition].type === 'PalabraReservadaFor') {
+        parseForDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaWhile') {
+        parseWhileDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaFunction') {
+        parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaNum' || tokens[currentPosition].type === 'PalabraReservadaFloat' || tokens[currentPosition].type === 'PalabraReservadaString') {
+        parseVariableDeclaration();
+      } else {
+        throw new Error(`Error de sintaxis: Token inesperado ${tokens[currentPosition].type}`);
+      }
+    }
+    expect('LlaveCierre');
+    expect('PalabraReservadaElse')
+    expect('LlaveApertura');
+    while (tokens[currentPosition].type !== 'LlaveCierre') {
+      if (tokens[currentPosition].type === 'PalabraReservadaFor') {
+        parseForDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaWhile') {
+        parseWhileDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaFunction') {
+        parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaNum' || tokens[currentPosition].type === 'PalabraReservadaFloat' || tokens[currentPosition].type === 'PalabraReservadaString') {
+        parseVariableDeclaration();
+      } else {
+        throw new Error(`Error de sintaxis: Token inesperado ${tokens[currentPosition].type}`);
+      }
+    }
     expect('LlaveCierre');
   }
 
-  function parseExpression() {
+  function parseWhileDeclaration() {
+    expect('PalabraReservadaWhile');
+    expect('ParentesisApertura');
     expect('Identificador');
     expect('Igualdad');
     expect('Identificador');
+    expect('ParentesisCierre');
+    expect('LlaveApertura');
+    while (tokens[currentPosition].type !== 'LlaveCierre') {
+      if (tokens[currentPosition].type === 'PalabraReservadaFor') {
+        parseForDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaIf') {
+        parseIfDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaFunction') {
+        parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaNum' || tokens[currentPosition].type === 'PalabraReservadaFloat' || tokens[currentPosition].type === 'PalabraReservadaString') {
+        parseVariableDeclaration();
+      } else {
+        throw new Error(`Error de sintaxis: Token inesperado ${tokens[currentPosition].type}`);
+      }
+    }
+    expect('LlaveCierre');
   }
+
+  function parseForDeclaration() {
+    expect('PalabraReservadaFor');
+    expect('ParentesisApertura');
+    expect('Identificador')
+    expect('Igualdad')
+    expect('Identificador')
+    expect('ParentesisCierre');
+    expect('LlaveApertura');
+
+    while (tokens[currentPosition].type !== 'LlaveCierre') {
+      if (tokens[currentPosition].type === 'PalabraReservadaWhile') {
+        parseWhileDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaIf') {
+        parseIfDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaFunction') {
+        parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === 'PalabraReservadaNum' || tokens[currentPosition].type === 'PalabraReservadaFloat' || tokens[currentPosition].type === 'PalabraReservadaString') {
+        parseVariableDeclaration();
+      } else {
+        throw new Error(`Error de sintaxis: Token inesperado ${tokens[currentPosition].type}`);
+      }
+    }
+
+    expect('LlaveCierre');
+  }
+
 
   function parseProgram() {
     while (currentPosition < tokens.length) {
@@ -141,6 +224,12 @@ function parse(tokens) {
         parseVariableDeclaration();
       } else if (token.type === 'PalabraReservadaFunction') {
         parseFunctionDeclaration();
+      } else if (token.type === 'PalabraReservadaIf') {
+        parseIfDeclaration();
+      } else if (token.type === 'PalabraReservadaWhile') {
+        parseWhileDeclaration();
+      } else if (token.type === 'PalabraReservadaFor') {
+        parseForDeclaration();
       } else {
         throw new Error(`Error de sintaxis: Token inesperado ${token.type}`);
       }
