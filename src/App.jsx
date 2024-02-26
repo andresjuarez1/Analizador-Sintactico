@@ -20,7 +20,6 @@ const tiposToken = [
   { regex: /^}/, token: "LlaveCierre" },
   { regex: /^\(/, token: "ParentesisApertura" },
   { regex: /^\)/, token: "ParentesisCierre" },
-
 ];
 
 function lex(input) {
@@ -56,7 +55,6 @@ function lex(input) {
       break;
     }
   }
-
   return tokens;
 }
 
@@ -235,7 +233,6 @@ function parse(tokens) {
       }
     }
   }
-
   parseProgram();
 }
 
