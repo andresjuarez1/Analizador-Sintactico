@@ -1,5 +1,6 @@
 export function parse(tokens) {
   let currentPosition = 0;
+  let variables = {};
 
   function nextToken() {
     currentPosition++;
@@ -16,6 +17,22 @@ export function parse(tokens) {
     }
   }
 
+  function parsePrintStatement() {
+    expect("ParentesisApertura");
+    expect("Identificador");
+    const variableName = tokens[currentPosition].value;
+    expect("ParentesisCierre");
+    expect("PuntoYComa");
+    if (variables.hasOwnProperty(variableName)) {
+      console.log(variables[variableName]);
+    } else {
+      throw new Error(
+        `Error: La variable '${variableName}' no está definida.`
+      );
+    }
+  }
+
+
   function parseVariableDeclaration() {
     if (
       tokens[currentPosition].type === "PalabraReservadaNum" ||
@@ -23,26 +40,45 @@ export function parse(tokens) {
       tokens[currentPosition].type === "PalabraReservadaString"
     ) {
       const tipoVariable = tokens[currentPosition].type;
-
+  
       nextToken();
+      const nombreVariable = tokens[currentPosition].value;
       expect("Identificador");
       if (tokens[currentPosition].type === "Asignacion") {
         nextToken();
-        if (
-          (tipoVariable === "PalabraReservadaNum" &&
-            tokens[currentPosition].type === "Numero") ||
-          (tipoVariable === "PalabraReservadaFloat" &&
-            (tokens[currentPosition].type === "Numero" ||
-              tokens[currentPosition].type === "Identificador")) ||
-          (tipoVariable === "PalabraReservadaString" &&
-            tokens[currentPosition].type === "Cadena")
-        ) {
-          nextToken();
-        } else {
-          throw new Error(
-            `Error de sintaxis: El tipo de variable '${tipoVariable}' no coincide con el valor asignado '${tokens[currentPosition].type}'`
-          );
+        let valor;
+        // Verificar que el tipo de valor asignado coincida con el tipo de variable
+        if (tipoVariable === "PalabraReservadaNum") {
+          if (tokens[currentPosition].type === "Numero") {
+            valor = tokens[currentPosition].value;
+          } else {
+            throw new Error(
+              `Error de sintaxis: Se esperaba un número para la variable '${nombreVariable}'`
+            );
+          }
+        } else if (tipoVariable === "PalabraReservadaFloat") {
+          if (
+            tokens[currentPosition].type === "Numero" ||
+            tokens[currentPosition].type === "Identificador"
+          ) {
+            valor = tokens[currentPosition].value;
+          } else {
+            throw new Error(
+              `Error de sintaxis: Se esperaba un número o identificador para la variable '${nombreVariable}'`
+            );
+          }
+        } else if (tipoVariable === "PalabraReservadaString") {
+          if (tokens[currentPosition].type === "Cadena") {
+            valor = tokens[currentPosition].value;
+          } else {
+            throw new Error(
+              `Error de sintaxis: Se esperaba una cadena para la variable '${nombreVariable}'`
+            );
+          }
         }
+        // Almacena la variable y su valor si la validación es correcta
+        variables[nombreVariable] = valor;
+        nextToken();
       }
       expect("PuntoYComa");
     } else {
@@ -197,7 +233,9 @@ export function parse(tokens) {
   function parseProgram() {
     while (currentPosition < tokens.length) {
       const token = tokens[currentPosition];
-      if (
+      if (token.type === "PalabraReservadaPrint") {
+        parsePrintStatement();
+      } else if (
         token.type === "PalabraReservadaNum" ||
         token.type === "PalabraReservadaFloat" ||
         token.type === "PalabraReservadaString"
@@ -215,6 +253,8 @@ export function parse(tokens) {
         throw new Error(`Error de sintaxis: Token inesperado ${token.type}`);
       }
     }
+    console.log("Variables guardadas:");
+    console.log(variables);
   }
   parseProgram();
 }

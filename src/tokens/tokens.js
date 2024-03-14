@@ -17,4 +17,5 @@ export const tiposToken = [
   { regex: /^}/, token: "LlaveCierre" },
   { regex: /^\(/, token: "ParentesisApertura" },
   { regex: /^\)/, token: "ParentesisCierre" },
+  { regex: /^print/, token: "PalabraReservadaPrint" },
 ];
