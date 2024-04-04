@@ -1,6 +1,7 @@
 export function parse(tokens) {
   let currentPosition = 0;
   let variables = {};
+  let variablesString = '';
 
   function nextToken() {
     currentPosition++;
@@ -17,22 +18,6 @@ export function parse(tokens) {
     }
   }
 
-  function parsePrintStatement() {
-    expect("ParentesisApertura");
-    expect("Identificador");
-    const variableName = tokens[currentPosition].value;
-    expect("ParentesisCierre");
-    expect("PuntoYComa");
-    if (variables.hasOwnProperty(variableName)) {
-      console.log(variables[variableName]);
-    } else {
-      throw new Error(
-        `Error: La variable '${variableName}' no está definida.`
-      );
-    }
-  }
-
-
   function parseVariableDeclaration() {
     if (
       tokens[currentPosition].type === "PalabraReservadaNum" ||
@@ -47,7 +32,6 @@ export function parse(tokens) {
       if (tokens[currentPosition].type === "Asignacion") {
         nextToken();
         let valor;
-        // Verificar que el tipo de valor asignado coincida con el tipo de variable
         if (tipoVariable === "PalabraReservadaNum") {
           if (tokens[currentPosition].type === "Numero") {
             valor = tokens[currentPosition].value;
@@ -76,8 +60,7 @@ export function parse(tokens) {
             );
           }
         }
-        // Almacena la variable y su valor si la validación es correcta
-        variables[nombreVariable] = valor;
+        variables[nombreVariable] = { nombre: nombreVariable, valor: valor };
         nextToken();
       }
       expect("PuntoYComa");
@@ -86,7 +69,13 @@ export function parse(tokens) {
         `Error de sintaxis: Se esperaba PalabraReservadaNum, PalabraReservadaFloat o PalabraReservadaString pero se encontró ${tokens[currentPosition].type}`
       );
     }
+    for (const variableName in variables) {
+      if (variables.hasOwnProperty(variableName)) {
+        console.log(`Nombre: ${variables[variableName].nombre}, Valor: ${variables[variableName].valor}`);
+      }
+    }
   }
+  
 
   function parseFunctionDeclaration() {
     expect("PalabraReservadaFunction");
@@ -114,6 +103,15 @@ export function parse(tokens) {
       }
     }
     expect("LlaveCierre");
+  }
+
+  
+  function parsePrintDeclaration() {
+    expect("PalabraReservadaPrint");
+    expect("ParentesisApertura");
+    expect("Identificador");
+    expect("ParentesisCierre");
+    expect("PuntoYComa")
   }
 
   function parseIfDeclaration() {
@@ -226,16 +224,13 @@ export function parse(tokens) {
         );
       }
     }
-
     expect("LlaveCierre");
   }
 
   function parseProgram() {
     while (currentPosition < tokens.length) {
       const token = tokens[currentPosition];
-      if (token.type === "PalabraReservadaPrint") {
-        parsePrintStatement();
-      } else if (
+      if (
         token.type === "PalabraReservadaNum" ||
         token.type === "PalabraReservadaFloat" ||
         token.type === "PalabraReservadaString"
@@ -245,6 +240,8 @@ export function parse(tokens) {
         parseFunctionDeclaration();
       } else if (token.type === "PalabraReservadaIf") {
         parseIfDeclaration();
+      } else if (token.type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (token.type === "PalabraReservadaWhile") {
         parseWhileDeclaration();
       } else if (token.type === "PalabraReservadaFor") {
@@ -253,8 +250,7 @@ export function parse(tokens) {
         throw new Error(`Error de sintaxis: Token inesperado ${token.type}`);
       }
     }
-    console.log("Variables guardadas:");
-    console.log(variables);
+
   }
   parseProgram();
 }

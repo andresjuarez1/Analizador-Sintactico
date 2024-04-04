@@ -6,7 +6,6 @@ import { lex } from './analyzer/lexical/lexical'
 
 function App() {
   const [codigoFuente, setCodigoFuente] = useState('');
-  const [variableValue, setVariableValue] = useState('');
   const [tokensGenerados, setTokensGenerados] = useState([]);
   const [error, setError] = useState('');
 
@@ -47,7 +46,6 @@ function App() {
               <li key={index} className='text-[#EFFD95]'>{`${token.type} (${token.value})`}</li>
             ))}
           </ul>
-          <p id="variableValue" className="text-white">{  variableValue}</p>
           {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
