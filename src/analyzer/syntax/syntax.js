@@ -25,7 +25,7 @@ export function parse(tokens) {
       tokens[currentPosition].type === "PalabraReservadaString"
     ) {
       const tipoVariable = tokens[currentPosition].type;
-  
+
       nextToken();
       const nombreVariable = tokens[currentPosition].value;
       expect("Identificador");
@@ -75,7 +75,7 @@ export function parse(tokens) {
       }
     }
   }
-  
+
 
   function parseFunctionDeclaration() {
     expect("PalabraReservadaFunction");
@@ -90,6 +90,8 @@ export function parse(tokens) {
         parseWhileDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaIf") {
         parseIfDeclaration();
+      } else if (tokens[currentPosition].type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (
         tokens[currentPosition].type === "PalabraReservadaNum" ||
         tokens[currentPosition].type === "PalabraReservadaFloat" ||
@@ -105,11 +107,12 @@ export function parse(tokens) {
     expect("LlaveCierre");
   }
 
-  
+
   function parsePrintDeclaration() {
     expect("PalabraReservadaPrint");
     expect("ParentesisApertura");
     expect("Cadena")
+
     expect("ParentesisCierre");
     expect("PuntoYComa")
   }
@@ -129,6 +132,8 @@ export function parse(tokens) {
         parseWhileDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaFunction") {
         parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (
         tokens[currentPosition].type === "PalabraReservadaNum" ||
         tokens[currentPosition].type === "PalabraReservadaFloat" ||
@@ -151,6 +156,8 @@ export function parse(tokens) {
         parseWhileDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaFunction") {
         parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (
         tokens[currentPosition].type === "PalabraReservadaNum" ||
         tokens[currentPosition].type === "PalabraReservadaFloat" ||
@@ -179,6 +186,8 @@ export function parse(tokens) {
         parseForDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaIf") {
         parseIfDeclaration();
+      } else if (tokens[currentPosition].type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaFunction") {
         parseFunctionDeclaration();
       } else if (
@@ -212,6 +221,8 @@ export function parse(tokens) {
         parseIfDeclaration();
       } else if (tokens[currentPosition].type === "PalabraReservadaFunction") {
         parseFunctionDeclaration();
+      } else if (tokens[currentPosition].type === "PalabraReservadaPrint") {
+        parsePrintDeclaration();
       } else if (
         tokens[currentPosition].type === "PalabraReservadaNum" ||
         tokens[currentPosition].type === "PalabraReservadaFloat" ||
