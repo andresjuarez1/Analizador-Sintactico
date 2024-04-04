@@ -8,6 +8,7 @@ export const tiposToken = [
   { regex: /^while/, token: "PalabraReservadaWhile" },
   { regex: /^for/, token: "PalabraReservadaFor" },
   { regex: /^print/, token: "PalabraReservadaPrint" },
+  { regex: /^call/, token: "PalabraReservadaLlamadaFuncion" },
   { regex: /^[_a-zA-Z][_a-zA-Z0-9]*/, token: "Identificador" },
   { regex: /^"[^"]*"/, token: "Cadena" },
   { regex: /^-?[0-9]+(?:\.[0-9]+)?/, token: "Numero" },

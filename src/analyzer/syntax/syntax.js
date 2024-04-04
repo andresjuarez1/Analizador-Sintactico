@@ -112,7 +112,14 @@ export function parse(tokens) {
     expect("PalabraReservadaPrint");
     expect("ParentesisApertura");
     expect("Cadena")
+    expect("ParentesisCierre");
+    expect("PuntoYComa")
+  }
 
+  function parseLlamadaFuncionDeclaration() {
+    expect("PalabraReservadaLlamadaFuncion");
+    expect("Identificador")
+    expect("ParentesisApertura");
     expect("ParentesisCierre");
     expect("PuntoYComa")
   }
@@ -210,10 +217,9 @@ export function parse(tokens) {
     expect("ParentesisApertura");
     expect("Identificador");
     expect("Igualdad");
-    expect("Identificador");
+    expect("Numero");
     expect("ParentesisCierre");
     expect("LlaveApertura");
-
     while (tokens[currentPosition].type !== "LlaveCierre") {
       if (tokens[currentPosition].type === "PalabraReservadaWhile") {
         parseWhileDeclaration();
@@ -257,6 +263,8 @@ export function parse(tokens) {
         parseWhileDeclaration();
       } else if (token.type === "PalabraReservadaFor") {
         parseForDeclaration();
+      } else if (token.type === "PalabraReservadaLlamadaFuncion") {
+        parseLlamadaFuncionDeclaration();
       } else {
         throw new Error(`Error de sintaxis: Token inesperado ${token.type}`);
       }
