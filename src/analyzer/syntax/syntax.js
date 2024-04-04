@@ -109,7 +109,7 @@ export function parse(tokens) {
   function parsePrintDeclaration() {
     expect("PalabraReservadaPrint");
     expect("ParentesisApertura");
-    expect("Identificador");
+    expect("Cadena")
     expect("ParentesisCierre");
     expect("PuntoYComa")
   }
